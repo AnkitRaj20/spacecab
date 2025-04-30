@@ -11,6 +11,8 @@ import healthRoute from "./routes/health.route.js";
 import router from "./routes/index.js";
 import logger from "../logger.js";
 import { globalErrorHandler } from "./utils/error.util.js";
+import swaggerUi from 'swagger-ui-express';
+import swaggerJsdoc from 'swagger-jsdoc';
 
 // Load environment variables
 dotenv.config();
@@ -78,6 +80,23 @@ app.use(
   })
 );
 
+// Swagger config
+const swaggerOptions = {
+  definition: {
+    openapi: '3.0.0',
+    info: {
+      title: 'My ES6 API',
+      version: '1.0.0',
+      description: 'API documentation using Swagger and ES6',
+    },
+  },
+  apis: ['./src/routes/*.route.js'], // adjust path to your routes
+};
+
+const swaggerSpec = swaggerJsdoc(swaggerOptions);
+
+// Middleware
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 // API Routes
 app.use("/api/v1", router);
 app.use("/health", healthRoute);

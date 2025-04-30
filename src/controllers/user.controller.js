@@ -4,10 +4,10 @@ import asyncHandler from "../utils/asyncHandler.util.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.util.js";
 import { ApiResponse } from "../utils/ApiResponse.util.js";
 import { createToken } from "../middlewares/auth.middleware.js";
-import { cookieOptions } from "../constants/constant.js";
+import { cookieOptions, RoleType } from "../constants/constant.js";
 
 export const registerUser = asyncHandler(async (req, res) => {
-  const { email, password, name, mobile } = req.body;
+  const { email, password, name, mobile, role = RoleType.PASSENGER } = req.body;
   // Check all fields are present - validation
   if ([email, password, name].some((field) => field?.trim() === "")) {
     throw new ApiError(400, "All fields are required");
@@ -46,6 +46,7 @@ export const registerUser = asyncHandler(async (req, res) => {
     name,
     mobile,
     profilePicture: profilePicture?.url,
+    role,
   });
 
   if (!user) {
@@ -156,4 +157,14 @@ export const getUserData = asyncHandler(async (req, res) => {
   return res
     .status(200)
     .json(new ApiResponse(200, user, "User fetched successfully"));
+});
+
+export const getAllDrivers = asyncHandler(async (req, res) => {
+  const drivers = await User.find({ role: RoleType.DRIVER });
+  if (!drivers) {
+    throw new ApiError(404, "No drivers found");
+  }
+  return res
+    .status(200)
+    .json(new ApiResponse(200, drivers, "Drivers fetched successfully"));
 });

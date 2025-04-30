@@ -42,6 +42,17 @@ const userSchema = new Schema(
       ],
       default: RoleType.PASSENGER,
     },
+    isVerified: {
+      type: Boolean,
+      default: false,
+    },
+    isOnline: {
+      type: Boolean,
+      default: false,
+    },
+    rating: {
+      type: Number,
+    },
     forgotPasswordToken: String,
     forgotPasswordTokenExpiry: Date,
   },
